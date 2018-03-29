@@ -5,6 +5,7 @@ cmake-build-release/
 .idea/**/mongoSettings.xml
 *.iws
 *.iml
+*.log
 out/
 target
 .idea_modules/
