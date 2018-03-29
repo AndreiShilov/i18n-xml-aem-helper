@@ -11,7 +11,7 @@ Easy to use -> ```java -jar app.jar path/to/file.csv path/to/i18n/folder```
 
 #### Example
 
-```java -jar app.jar /Users/andreishilov/git/translations.csv /Users/andreishilov/git/app/app-components/app/src/main/jcr_root/apps/app/i18n
+```java -jar app.jar /Users/andreishilov/git/translations.csv /Users/andreishilov/git/app/app-components/app/src/main/jcr_root/apps/app/i18n```
 
 ### csv format
 
