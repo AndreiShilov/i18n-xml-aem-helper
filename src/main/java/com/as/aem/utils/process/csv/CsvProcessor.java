@@ -17,6 +17,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.log4j.Logger;
 
+import com.google.common.xml.XmlEscapers;
+
 /**
  * CSV contract
  * key, lang1, lang2, lang3||no
@@ -35,7 +37,7 @@ public class CsvProcessor {
 
         File csvFile = new File(pathToCsvFile);
 
-        if(!csvFile.isFile()){
+        if (!csvFile.isFile()) {
             LOGGER.warn("Path = [" + pathToCsvFile + "] is not a file. Stopping to process all");
             throw new IllegalArgumentException();
         }
@@ -59,7 +61,7 @@ public class CsvProcessor {
 
             StreamSupport.stream(parse.getRecords().spliterator(), false).forEach(record -> {
                 for (String lang : languagesToImport) {
-                    langKeValueMapping.get(lang).put(record.get("key"), record.get(lang));
+                    langKeValueMapping.get(lang).put(record.get("key"), escape(record.get(lang)));
                 }
             });
 
@@ -75,6 +77,11 @@ public class CsvProcessor {
 
     public Map<String, Map<String, String>> getLangKeValueMapping() {
         return langKeValueMapping;
+    }
+
+
+    private String escape(final String string) {
+        return XmlEscapers.xmlContentEscaper().escape(string);
     }
 
     private static List<String> getLanguagesToImport(Map<String, Integer> headerMap) {
