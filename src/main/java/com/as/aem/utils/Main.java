@@ -1,28 +1,39 @@
 package com.as.aem.utils;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
-import com.as.aem.utils.process.csv.CsvProcessor;
+import com.google.common.collect.Maps;
 
 public class Main {
 
     private static final Logger LOGGER = Logger.getLogger(Main.class);
 
-    private CsvProcessor processor;
-
     public static void main(String[] args) {
 
-        if (args.length < 2) {
-            LOGGER.info("Not enough arguments, simple execution should be like:");
-            LOGGER.info("java -jar utils.jar path/to/csv path/to/dictionaries/folder");
-        }
-
-        final String pathToCsvFile = args[0];
-        final String pathToDictionariesFolder = args[1];
-
-        App app = new App(pathToCsvFile, pathToDictionariesFolder);
+        final App app = new App(argsToMap(args));
 
         app.process();
+    }
 
+
+    private static final Map<String, String> argsToMap(final String[] args) {
+
+        final Map<String, String> config = Maps.newHashMap();
+
+        for (String arg : args) {
+            String[] split = arg.split("=");
+            if (split.length == 1) {
+                LOGGER.info("Passed argument does not have a value. Arg = [" + arg + "]");
+            } else {
+                // todo additional handling ?
+                config.put(split[0], split[1]);
+            }
+
+        }
+
+        return Collections.unmodifiableMap(config);
     }
 }

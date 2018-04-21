@@ -1,5 +1,8 @@
 package com.as.aem.utils;
 
+import static com.as.aem.utils.Constants.PROCESSOR_TYPE;
+import static com.as.aem.utils.Constants.XML.XML_FOLDER_PATH;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,38 +11,37 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.as.aem.utils.process.csv.CsvProcessor;
-import com.as.aem.utils.process.xml.XmlProcessor;
+import com.as.aem.utils.process.I18nProcessor;
+import com.as.aem.utils.process.I18nProcessorFactory;
 
 public class App {
 
     private static final Logger LOGGER = Logger.getLogger(App.class);
 
-    private final CsvProcessor csvProcessor;
-    private final XmlProcessor xmlProcessor;
+    private final I18nProcessor initialDictionaryProcessor;
+    private final I18nProcessor dictionaryUpdatesProcessor;
 
-    private final String pathToDictionariesFolder;
+    private final Map<String, String> config;
 
-    public App(String pathToCsvFile, String pathToDictionariesFolder) {
-        xmlProcessor = new XmlProcessor(pathToDictionariesFolder);
-        csvProcessor = new CsvProcessor(pathToCsvFile);
-        this.pathToDictionariesFolder = pathToDictionariesFolder;
+    public App(final Map<String, String> config) {
+        this.config = config;
+        initialDictionaryProcessor = I18nProcessorFactory.getI18nProcessor("xml", config);
+        dictionaryUpdatesProcessor = I18nProcessorFactory.getI18nProcessor(config.get(PROCESSOR_TYPE), config);
     }
 
     //    TODO reduce complexity
     public void process() {
 
-        Map<String, Map<String, String>> xmlProcessorLangToKeyValueMap = xmlProcessor.getLangToKeyValueMap();
-        Map<String, Map<String, String>> csvProcessorLangKeValueMapping = csvProcessor.getLangKeValueMapping();
+        Map<String, Map<String, String>> initialDictionary = initialDictionaryProcessor.getI18nData();
+        Map<String, Map<String, String>> dictionaryUpdates = dictionaryUpdatesProcessor.getI18nData();
 
-
-        for (Map.Entry<String, Map<String, String>> mapEntry : csvProcessorLangKeValueMapping.entrySet()) {
+        for (Map.Entry<String, Map<String, String>> mapEntry : dictionaryUpdates.entrySet()) {
             String key = mapEntry.getKey();
 
 
-            if (xmlProcessorLangToKeyValueMap.containsKey(key)) {
+            if (initialDictionary.containsKey(key)) {
 
-                Map<String, String> stringStringMap = xmlProcessorLangToKeyValueMap.get(key);
+                Map<String, String> stringStringMap = initialDictionary.get(key);
 
                 for (Map.Entry<String, String> entry : mapEntry.getValue().entrySet()) {
                     String dictionaryKey = entry.getKey();
@@ -63,13 +65,13 @@ public class App {
 
             } else {
                 LOGGER.info("Seems to be a new language found in csv. Language key = [" + key + "]");
-                xmlProcessorLangToKeyValueMap.put(key, mapEntry.getValue());
+                initialDictionary.put(key, mapEntry.getValue());
             }
         }
 
         LOGGER.debug("Merging was finished");
 
-        writeToFiles(pathToDictionariesFolder, xmlProcessorLangToKeyValueMap);
+        writeToFiles(config.get(XML_FOLDER_PATH), initialDictionary);
 
     }
 

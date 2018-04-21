@@ -17,15 +17,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class XmlProcessor {
+import com.as.aem.utils.Constants;
+import com.as.aem.utils.process.I18nProcessor;
+import com.google.common.base.Preconditions;
+
+public class XmlProcessor implements I18nProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(XmlProcessor.class);
 
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("^[a-z]+\\.xml$");
 
-    private Map<String, Map<String, String>> langToKeyValueMap= new HashMap<>();
+    private Map<String, Map<String, String>> langToKeyValueMap = new HashMap<>();
 
     public XmlProcessor(String pathToDictionariesFolder) {
+
+        Preconditions.checkNotNull(pathToDictionariesFolder, "You should pass path to the dictionaries folder '%s=folde/path'", Constants.XML.XML_FOLDER_PATH);
 
         final File xmlLangsFolder = new File(pathToDictionariesFolder);
 
@@ -47,7 +53,7 @@ public class XmlProcessor {
                 if (FILE_NAME_PATTERN.matcher(fileName).matches()) {
                     parseXmlAndAddDataToMap(langFile, langToKeyValueMap);
                 } else {
-                    LOGGER.debug("File name = [" + fileName + "] does not match pattern = []");
+                    LOGGER.debug("File name = [" + fileName + "] does not match pattern = [" + FILE_NAME_PATTERN.pattern() + "]");
                 }
             }
         }
@@ -55,12 +61,9 @@ public class XmlProcessor {
 
     }
 
-    public Map<String, Map<String, String>> getLangToKeyValueMap() {
-        return langToKeyValueMap;
-    }
-
     private void parseXmlAndAddDataToMap(File langFile, Map<String, Map<String, String>> langToKeyValueMap) {
-        LOGGER.debug("File name = [" + langFile.getName() + "]");
+        final String fileName = langFile.getName();
+        LOGGER.debug("File name = [" + fileName + "]");
 
         final Map<String, String> map = new HashMap<>();
         String lang = null;
@@ -70,13 +73,18 @@ public class XmlProcessor {
         try {
             dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(langFile);
+
             //optional, but recommended
             //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             Element documentElement = doc.getDocumentElement();
 
             documentElement.normalize();
 
-            lang = documentElement.getAttribute("jcr:language");
+            lang = documentElement.getAttribute("jcr:language").toLowerCase().trim();
+
+            if (!lang.equals(fileName.substring(0, fileName.lastIndexOf('.')))) {
+                throw new RuntimeException("File name language = [" + lang + "] and jcr:language = [" + fileName + "] are not equals"); // todo custom exception
+            }
 
             NodeList childNodes = documentElement.getChildNodes();
 
@@ -94,15 +102,20 @@ public class XmlProcessor {
 
             }
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //todo
         } catch (SAXException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //todo
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //todo
         }
 
         if (lang != null) {
             langToKeyValueMap.put(lang, map);
         }
+    }
+
+    @Override
+    public Map<String, Map<String, String>> getI18nData() {
+        return langToKeyValueMap;
     }
 }
