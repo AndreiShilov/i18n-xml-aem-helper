@@ -1,6 +1,8 @@
 package com.as.aem.utils;
 
+import static com.as.aem.utils.Constants.DICTIONARY_BASE_NAME;
 import static com.as.aem.utils.Constants.PROCESSOR_TYPE;
+import static com.as.aem.utils.Constants.XML.BASE_NAME_TEMPLATE;
 import static com.as.aem.utils.Constants.XML.XML_FOLDER_PATH;
 
 import java.io.IOException;
@@ -22,11 +24,21 @@ public class App {
     private final I18nProcessor dictionaryUpdatesProcessor;
 
     private final Map<String, String> config;
+    private final String baseNameStr;
 
     public App(final Map<String, String> config) {
         this.config = config;
         initialDictionaryProcessor = I18nProcessorFactory.getI18nProcessor("xml", config);
         dictionaryUpdatesProcessor = I18nProcessorFactory.getI18nProcessor(config.get(PROCESSOR_TYPE), config);
+
+        String baseName = config.get(DICTIONARY_BASE_NAME);
+
+        if (baseName == null) {
+            this.baseNameStr = "";
+        } else {
+            this.baseNameStr = String.format(BASE_NAME_TEMPLATE, baseName);
+        }
+
     }
 
     //    TODO reduce complexity
@@ -83,7 +95,7 @@ public class App {
     }
 
     private void writeToFile(String folder, Map.Entry<String, Map<String, String>> langMap) {
-        final StringBuilder stringBuilder = new StringBuilder(String.format(Constants.XML.FILE_HEADER, langMap.getKey()));
+        final StringBuilder stringBuilder = new StringBuilder(String.format(Constants.XML.FILE_HEADER, langMap.getKey(), baseNameStr));
 
         langMap.getValue()
                 .entrySet()

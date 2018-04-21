@@ -6,6 +6,7 @@ public final class Constants {
     }
 
     public static final String PROCESSOR_TYPE = "processor.type";
+    public static final String DICTIONARY_BASE_NAME = "dictionary.base.name";
 
     public static final class XML {
         private XML() {
@@ -20,8 +21,10 @@ public final class Constants {
                 "<jcr:root xmlns:sling=\"http://sling.apache.org/jcr/sling/1.0\" xmlns:jcr=\"http://www.jcp.org/jcr/1.0\"\n" +
                 "          xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\"\n" +
                 "          jcr:language=\"%s\"\n" +
-                "          jcr:mixinTypes=\"[mix:language]\"\n" +
+                "          jcr:mixinTypes=\"[mix:language]\"\n%s" +
                 "          jcr:primaryType=\"sling:Folder\">\n";
+
+        public static final String BASE_NAME_TEMPLATE = "          sling:basename=\"%s\"\n";
 
         public static final String FILE_FOOTER = "</jcr:root>";
 
