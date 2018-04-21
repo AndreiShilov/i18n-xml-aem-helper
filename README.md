@@ -28,16 +28,18 @@ To avoid pain of manually addition of new i18n keys with translations during aem
 
 Csv format : ```key,en||no,de,fr,it```
 
+```en||no``` means that we do not want to import ```en``` language
+
 * With base name
 
 ```
-java -jar app processor.type=csv csv.file=<PATH_TO_PROJECT>/i18ndictionaryhelper/example/example.csv xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example dictionary.base.name=dictionaryBaseName
+java -jar app.jar processor.type=csv csv.file=<PATH_TO_PROJECT>/i18ndictionaryhelper/example/example.csv xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example dictionary.base.name=dictionaryBaseName
 ```
 
 * Without base name
 
 ```
-java -jar app processor.type=csv csv.file=<PATH_TO_PROJECT>/i18ndictionaryhelper/example/example.csv xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example
+java -jar app.jar processor.type=csv csv.file=<PATH_TO_PROJECT>/i18ndictionaryhelper/example/example.csv xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example
 ```
  
 #### HTML
@@ -47,14 +49,14 @@ HTML format: just ana html table. Example could be found -> [here](https://githu
 * Without credentials 
 
 ```
-java -jar app processor.type=html xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example html.url=https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md
+java -jar app.jar processor.type=html xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example html.url=https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md
 
 ```
 
 * With credentials
 
 ```
-java -jar app processor.type=html xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example html.url=https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md html.login=myLogin html.password=myPassword
+java -jar app.jar processor.type=html xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example html.url=https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md html.login=myLogin html.password=myPassword
 
 ```
  
