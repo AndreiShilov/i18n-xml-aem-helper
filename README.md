@@ -46,7 +46,7 @@ java -jar i18n-dictionary-helper-0.1.jar processor.type=csv csv.file=<PATH_TO_PR
  
 #### HTML
 
-HTML format: just ana html table. Example could be found -> [here](https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md)
+HTML format: just html table. Example could be found -> [here](https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md)
 
 * Without credentials 
 
