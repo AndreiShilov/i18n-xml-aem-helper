@@ -3,6 +3,7 @@ package com.as.aem.utils.process.xml;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -65,7 +66,7 @@ public class XmlProcessor implements I18nProcessor {
         final String fileName = langFile.getName();
         LOGGER.debug("File name = [" + fileName + "]");
 
-        final Map<String, String> map = new HashMap<>();
+        final Map<String, String> map = new LinkedHashMap<>();
         String lang = null;
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

@@ -19,7 +19,7 @@ public class Main {
     }
 
 
-    private static final Map<String, String> argsToMap(final String[] args) {
+    private static Map<String, String> argsToMap(final String[] args) {
 
         final Map<String, String> config = Maps.newHashMap();
 

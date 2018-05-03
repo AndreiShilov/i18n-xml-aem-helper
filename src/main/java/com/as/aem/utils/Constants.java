@@ -7,6 +7,7 @@ public final class Constants {
 
     public static final String PROCESSOR_TYPE = "processor.type";
     public static final String DICTIONARY_BASE_NAME = "dictionary.base.name";
+    public static final String DICTIONARY_SORTING = "dictionary.sorting";
 
     public static final class XML {
         private XML() {

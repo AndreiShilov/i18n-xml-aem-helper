@@ -4,6 +4,7 @@ package com.as.aem.utils.process.html;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jsoup.Jsoup;
@@ -56,7 +57,7 @@ public class HtmlProcessor implements I18nProcessor {
         langKeValueMapping = new HashMap<>(languagesToImport.size());
 
         languagesToImport.values().forEach(language -> {
-            langKeValueMapping.put(language, new HashMap<>());
+            langKeValueMapping.put(language, new LinkedHashMap<>());
         });
 
         final Elements tableBody = table.getElementsByTag("tbody");

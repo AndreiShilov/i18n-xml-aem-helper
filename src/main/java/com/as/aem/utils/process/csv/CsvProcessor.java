@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class CsvProcessor implements I18nProcessor {
             langKeValueMapping = new HashMap<>(languagesToImport.size());
 
             for (String lang : languagesToImport) {
-                langKeValueMapping.put(lang, new HashMap<>());
+                langKeValueMapping.put(lang, new LinkedHashMap<>());
             }
 
             parse.getRecords().forEach(record -> {

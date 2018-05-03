@@ -20,6 +20,9 @@ To avoid pain of manually addition of new i18n keys with translations during aem
 5. ```html.url``` - url path for html processor
     * html.url=https://github.com/AndreiShilov/i18n-xml-aem-helper/blob/master/example/ExampleTable.md
 6. ```html.login``` and ```html.password``` will be used for basic authorization header in case your page is not public (your confluence for example)
+7. ```dictionary.sorting``` is used to mark that you want to sort keys
+    * dictionary.sorting=true
+
 
 
 ### HOW-TO
@@ -43,6 +46,12 @@ java -jar i18n-dictionary-helper-0.1.jar processor.type=csv csv.file=<PATH_TO_PR
 ```
 java -jar i18n-dictionary-helper-0.1.jar processor.type=csv csv.file=<PATH_TO_PROJECT>/i18ndictionaryhelper/example/example.csv xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example
 ```
+ 
+* With sorting
+
+```
+java -jar i18n-dictionary-helper-0.1.jar processor.type=csv csv.file=<PATH_TO_PROJECT>/i18ndictionaryhelper/example/example.csv xml.folder.path=<PATH_TO_PROJECT>/i18ndictionaryhelper/example dictionary.sorting=true
+``` 
  
 #### HTML
 

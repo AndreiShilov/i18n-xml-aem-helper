@@ -1,15 +1,18 @@
 package com.as.aem.utils;
 
 import static com.as.aem.utils.Constants.DICTIONARY_BASE_NAME;
+import static com.as.aem.utils.Constants.DICTIONARY_SORTING;
 import static com.as.aem.utils.Constants.PROCESSOR_TYPE;
 import static com.as.aem.utils.Constants.XML.BASE_NAME_TEMPLATE;
 import static com.as.aem.utils.Constants.XML.XML_FOLDER_PATH;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
@@ -97,19 +100,29 @@ public class App {
     private void writeToFile(String folder, Map.Entry<String, Map<String, String>> langMap) {
         final StringBuilder stringBuilder = new StringBuilder(String.format(Constants.XML.FILE_HEADER, langMap.getKey(), baseNameStr));
 
-        langMap.getValue()
+        Stream<Map.Entry<String, String>> entryStream = langMap.getValue()
                 .entrySet()
-                .stream()
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .forEach(entry -> stringBuilder.append(String.format(Constants.XML.MESSAGE_NODE_TEMPLATE, entry.getKey(), entry.getValue())));
+                .stream();
+
+        if ("true".equals(config.get(DICTIONARY_SORTING))) {
+            entryStream
+                    .sorted(Comparator.comparing(Map.Entry::getKey))
+                    .forEach(entry -> stringBuilder.append(String.format(Constants.XML.MESSAGE_NODE_TEMPLATE, entry.getKey(), entry.getValue())));
+        } else {
+            entryStream
+                    .forEach(entry -> stringBuilder.append(String.format(Constants.XML.MESSAGE_NODE_TEMPLATE, entry.getKey(), entry.getValue())));
+        }
+
 
 //        closing tag for jcr:root
         stringBuilder.append(Constants.XML.FILE_FOOTER);
 
+        final String filePath = folder + File.separator + langMap.getKey().toLowerCase() + ".xml";
+
         try {
-            Files.write(Paths.get(folder + "/" + langMap.getKey().toLowerCase() + ".xml"), stringBuilder.toString().getBytes());
+            Files.write(Paths.get(filePath), stringBuilder.toString().getBytes());
         } catch (IOException e) {
-//                TODO
+            LOGGER.error("Can not write to file = [" + filePath + "]", e);
         }
     }
 }

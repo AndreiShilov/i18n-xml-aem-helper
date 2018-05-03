@@ -11,11 +11,11 @@ public interface I18nProcessor {
      *
      * language is a key -> Map as a value where -> key -> i18n key and value -> actual translation
      *
-     * @return Map<String   ,       Map   <   String   ,       String>> representation of i18n data
+     * @return map representation of i18n data
      */
     Map<String, Map<String, String>> getI18nData();
 
-    default String escape(final String str){
+    default String escape(final String str) {
         return XmlEscapers.xmlContentEscaper().escape(str);
     }
 }
