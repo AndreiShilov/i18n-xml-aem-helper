@@ -13,6 +13,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.as.aem.utils.process.I18nProcessor;
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -32,7 +33,8 @@ public class HtmlProcessor implements I18nProcessor {
             Document document = Jsoup.connect(url).header("Authorization", "Basic " + base64login).get();
             Elements table = document.getElementsByTag("table");
 
-            table.iterator().forEachRemaining(this::processTable);
+//            table.iterator().forEachRemaining(this::processTable);
+            this.processTable(table.get(2));
         } catch (IOException e) {
             throw new RuntimeException("Can not get html from " + url);
         }
@@ -49,8 +51,8 @@ public class HtmlProcessor implements I18nProcessor {
             String tableHeaderText = tableHeaderElement.text();
 
             // todo better recognition of Language name
-            if (tableHeaderText.matches("[a-z_-].+")) {
-                languagesToImport.put(tableHeaderElement.siblingIndex(), tableHeaderText);
+            if (tableHeaderText.matches("[A-Z_-].+")) {
+                languagesToImport.put(tableHeaderElement.siblingIndex(), tableHeaderText.toLowerCase().trim());
             }
         });
 
@@ -63,13 +65,13 @@ public class HtmlProcessor implements I18nProcessor {
         final Elements tableBody = table.getElementsByTag("tbody");
 
         tableBody.get(0).getElementsByTag("tr").iterator().forEachRemaining(tableRow -> {
-            String key = tableRow.child(0).text(); // should be key mandatory first element of any row
+            final String key = CharMatcher.anyOf("\r\n\t \u00A0").trimFrom(tableRow.child(0).text());// should be key mandatory first element of any row
 
             tableRow.children().iterator().forEachRemaining(rowCell -> {
                 int siblingIndex = rowCell.siblingIndex();
 
                 if (languagesToImport.containsKey(siblingIndex)) {
-                    langKeValueMapping.get(languagesToImport.get(siblingIndex)).put(key, escape(rowCell.text()));
+                    langKeValueMapping.get(languagesToImport.get(siblingIndex)).put(key, escape(rowCell.text()).trim());
                 }
 
             });

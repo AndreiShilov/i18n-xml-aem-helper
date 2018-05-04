@@ -28,8 +28,13 @@ public class Main {
             if (split.length == 1) {
                 LOGGER.info("Passed argument does not have a value. Arg = [" + arg + "]");
             } else {
-                // todo additional handling ?
-                config.put(split[0], split[1]);
+                // todo html might contain '=' in query
+
+                if (split.length > 2) {
+                    config.put(split[0], split[1] + "=" + split[2]);
+                } else {
+                    config.put(split[0], split[1]);
+                }
             }
 
         }

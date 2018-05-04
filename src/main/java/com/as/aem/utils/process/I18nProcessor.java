@@ -16,6 +16,6 @@ public interface I18nProcessor {
     Map<String, Map<String, String>> getI18nData();
 
     default String escape(final String str) {
-        return XmlEscapers.xmlContentEscaper().escape(str);
+        return XmlEscapers.xmlAttributeEscaper().escape(str);
     }
 }
