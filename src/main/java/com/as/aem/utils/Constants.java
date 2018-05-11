@@ -30,6 +30,7 @@ public final class Constants {
         public static final String FILE_FOOTER = "</jcr:root>";
 
         public static final String XML_FOLDER_PATH = "xml.folder.path";
+        public static  final String TYPE_NAME = "xml";
     }
 
     public static final class CSV {
@@ -37,12 +38,14 @@ public final class Constants {
         }
 
         public static  final String CSV_FILE_PATH = "csv.file";
+        public static  final String TYPE_NAME = "csv";
     }
 
     public static final class HTML {
         private HTML() {
         }
 
+        public static  final String TYPE_NAME = "html";
         public static  final String HTML_URL = "html.url";
         public static  final String HTML_LOGIN = "html.login";
         public static  final String HTML_PASSWORD = "html.password";

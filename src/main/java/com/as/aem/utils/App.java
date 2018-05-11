@@ -29,9 +29,9 @@ public class App {
     private final Map<String, String> config;
     private final String baseNameStr;
 
-    public App(final Map<String, String> config) {
+    private App(final Map<String, String> config) {
         this.config = config;
-        initialDictionaryProcessor = I18nProcessorFactory.getI18nProcessor("xml", config);
+        initialDictionaryProcessor = I18nProcessorFactory.getI18nProcessor(Constants.XML.TYPE_NAME, config);
         dictionaryUpdatesProcessor = I18nProcessorFactory.getI18nProcessor(config.get(PROCESSOR_TYPE), config);
 
         String baseName = config.get(DICTIONARY_BASE_NAME);
@@ -42,6 +42,10 @@ public class App {
             this.baseNameStr = String.format(BASE_NAME_TEMPLATE, baseName);
         }
 
+    }
+
+    public static App of(final Map<String, String> config) {
+        return new App(config);
     }
 
     //    TODO reduce complexity

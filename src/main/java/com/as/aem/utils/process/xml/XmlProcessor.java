@@ -26,7 +26,7 @@ public class XmlProcessor implements I18nProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(XmlProcessor.class);
 
-    private static final Pattern FILE_NAME_PATTERN = Pattern.compile("^[a-z]+\\.xml$");
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile("^[a-zA-Z_\\-]+\\.xml$");
 
     private Map<String, Map<String, String>> langToKeyValueMap = new HashMap<>();
 
