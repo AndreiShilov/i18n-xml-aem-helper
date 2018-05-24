@@ -17,7 +17,7 @@ public class Utils {
         throw new IllegalStateException();
     }
 
-    public static Map<String, String> argsToMap(final String[] args) {
+    static Map<String, String> argsToMap(final String[] args) {
 
         final Map<String, String> config = Maps.newHashMap();
 

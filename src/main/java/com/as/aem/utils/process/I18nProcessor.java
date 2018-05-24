@@ -18,4 +18,9 @@ public interface I18nProcessor {
     default String escape(final String str) {
         return XmlEscapers.xmlAttributeEscaper().escape(str);
     }
+
+    /**
+     * init Processor
+     */
+    void init();
 }

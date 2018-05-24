@@ -14,7 +14,7 @@ public class Main {
 
         Map<String, String> config = Utils.argsToMap(args);
 
-        LOGGER.debug("Parsed config map = [" + config + "]"); //todo
+        LOGGER.debug("Parsed config map = [" + config + "]");
 
         final App app = App.of(config);
 

@@ -21,25 +21,17 @@ public class HtmlProcessor implements I18nProcessor {
 
     private Map<String, Map<String, String>> langKeValueMapping;
 
+    private final String encodedCredentials;
+    private final String url;
+
     public HtmlProcessor(String url, String login, String password) {
 
-        Preconditions.checkNotNull(url, "");//todo
+        Preconditions.checkNotNull(url, "Url is required for html processor");
 
         final String auth = login + ":" + password;
-        final String base64login = new String(Base64.getEncoder().encode(auth.getBytes()));
-
-        try {
-            //todo handle case when we do not need authorization for end point
-            Document document = Jsoup.connect(url).header("Authorization", "Basic " + base64login).get();
-            Elements table = document.getElementsByTag("table");
-
-//            table.iterator().forEachRemaining(this::processTable);
-            this.processTable(table.get(2));
-        } catch (IOException e) {
-            throw new RuntimeException("Can not get html from " + url);
-        }
+        this.encodedCredentials = new String(Base64.getEncoder().encode(auth.getBytes()));
+        this.url = url;
     }
-
 
     void processTable(Element table) {
 
@@ -58,9 +50,7 @@ public class HtmlProcessor implements I18nProcessor {
 
         langKeValueMapping = new HashMap<>(languagesToImport.size());
 
-        languagesToImport.values().forEach(language -> {
-            langKeValueMapping.put(language, new LinkedHashMap<>());
-        });
+        languagesToImport.values().forEach(language -> langKeValueMapping.put(language, new LinkedHashMap<>()));
 
         final Elements tableBody = table.getElementsByTag("tbody");
 
@@ -81,6 +71,18 @@ public class HtmlProcessor implements I18nProcessor {
     @Override
     public Map<String, Map<String, String>> getI18nData() {
         return langKeValueMapping;
+    }
+
+    @Override
+    public void init() {
+        try {
+            Document document = Jsoup.connect(url).header("Authorization", "Basic " + this.encodedCredentials).get();
+            Elements table = document.getElementsByTag("table");
+
+            table.iterator().forEachRemaining(this::processTable);
+        } catch (IOException e) {
+            throw new IllegalStateException("Can not get html from " + url);
+        }
     }
 }
 

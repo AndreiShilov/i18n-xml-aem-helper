@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.as.aem.utils.Constants;
+import com.as.aem.utils.FileUtils;
 import com.as.aem.utils.process.I18nProcessor;
 import com.google.common.base.Preconditions;
 
@@ -30,36 +31,15 @@ public class XmlProcessor implements I18nProcessor {
 
     private Map<String, Map<String, String>> langToKeyValueMap = new HashMap<>();
 
-    public XmlProcessor(String pathToDictionariesFolder) {
+    private final String filePath;
+    private final FileUtils fileUtils;
 
-        Preconditions.checkNotNull(pathToDictionariesFolder, "You should pass path to the dictionaries folder '%s=folde/path'", Constants.XML.XML_FOLDER_PATH);
+    public XmlProcessor(String pathToDictionariesFolder, FileUtils fileUtils) {
 
-        final File xmlLangsFolder = new File(pathToDictionariesFolder);
+        Preconditions.checkNotNull(pathToDictionariesFolder, "You should pass path to the dictionaries folder '%s=folder/path'", Constants.XML.XML_FOLDER_PATH);
 
-        if (!xmlLangsFolder.isDirectory()) {
-            LOGGER.warn("Path = [" + pathToDictionariesFolder + "] is not a directory. Stopping to process all");
-            throw new IllegalArgumentException();
-        }
-
-        final File[] files = xmlLangsFolder.listFiles();
-
-        if (files == null) {
-            LOGGER.debug("No files under folder = [" + pathToDictionariesFolder + "]");
-        } else {
-
-            for (File langFile : files) {
-
-                final String fileName = langFile.getName();
-
-                if (FILE_NAME_PATTERN.matcher(fileName).matches()) {
-                    parseXmlAndAddDataToMap(langFile, langToKeyValueMap);
-                } else {
-                    LOGGER.debug("File name = [" + fileName + "] does not match pattern = [" + FILE_NAME_PATTERN.pattern() + "]");
-                }
-            }
-        }
-
-
+        this.fileUtils = fileUtils;
+        this.filePath = pathToDictionariesFolder;
     }
 
     private void parseXmlAndAddDataToMap(File langFile, Map<String, Map<String, String>> langToKeyValueMap) {
@@ -84,7 +64,7 @@ public class XmlProcessor implements I18nProcessor {
             lang = documentElement.getAttribute("jcr:language").toLowerCase().trim();
 
             if (!lang.equals(fileName.substring(0, fileName.lastIndexOf('.')))) {
-                throw new RuntimeException("File name language = [" + lang + "] and jcr:language = [" + fileName + "] are not equals"); // todo custom exception
+                throw new IllegalStateException("File name language = [" + lang + "] and jcr:language = [" + fileName + "] are not equals"); // todo custom exception
             }
 
             NodeList childNodes = documentElement.getChildNodes();
@@ -102,12 +82,8 @@ public class XmlProcessor implements I18nProcessor {
                 }
 
             }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace(); //todo
-        } catch (SAXException e) {
-            e.printStackTrace(); //todo
-        } catch (IOException e) {
-            e.printStackTrace(); //todo
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            LOGGER.error(e.getMessage(),e);
         }
 
         if (lang != null) {
@@ -118,5 +94,35 @@ public class XmlProcessor implements I18nProcessor {
     @Override
     public Map<String, Map<String, String>> getI18nData() {
         return langToKeyValueMap;
+    }
+
+    @Override
+    public void init() {
+
+        final File xmlLangsFolder = fileUtils.getFile(filePath);
+
+        if (!xmlLangsFolder.isDirectory()) {
+            LOGGER.warn("Path = [" + filePath + "] is not a directory. Stopping to process all");
+            throw new IllegalArgumentException();
+        }
+
+        final File[] files = xmlLangsFolder.listFiles();
+
+        if (files == null) {
+            LOGGER.debug("No files under folder = [" + filePath + "]");
+        } else {
+
+            for (File langFile : files) {
+
+                final String fileName = langFile.getName();
+
+                if (FILE_NAME_PATTERN.matcher(fileName).matches()) {
+                    parseXmlAndAddDataToMap(langFile, langToKeyValueMap);
+                } else {
+                    LOGGER.debug("File name = [" + fileName + "] does not match pattern = [" + FILE_NAME_PATTERN.pattern() + "]");
+                }
+            }
+        }
+
     }
 }

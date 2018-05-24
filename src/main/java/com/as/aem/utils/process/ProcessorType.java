@@ -5,6 +5,7 @@ import static com.as.aem.utils.Constants.HTML.HTML_LOGIN;
 import static com.as.aem.utils.Constants.HTML.HTML_PASSWORD;
 import static com.as.aem.utils.Constants.HTML.HTML_URL;
 import static com.as.aem.utils.Constants.XML.XML_FOLDER_PATH;
+import static com.as.aem.utils.FileUtils.FILE_UTILS;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -15,8 +16,8 @@ import com.as.aem.utils.process.html.HtmlProcessor;
 import com.as.aem.utils.process.xml.XmlProcessor;
 
 public enum ProcessorType {
-    XML(Constants.XML.TYPE_NAME, map -> new XmlProcessor(map.get(XML_FOLDER_PATH))),
-    CSV(Constants.CSV.TYPE_NAME, map -> new CsvProcessor(map.get(CSV_FILE_PATH))),
+    XML(Constants.XML.TYPE_NAME, map -> new XmlProcessor(map.get(XML_FOLDER_PATH), FILE_UTILS)),
+    CSV(Constants.CSV.TYPE_NAME, map -> new CsvProcessor(map.get(CSV_FILE_PATH),FILE_UTILS)),
     HTML(Constants.HTML.TYPE_NAME, map -> new HtmlProcessor(map.get(HTML_URL), map.get(HTML_LOGIN), map.get(HTML_PASSWORD)));
 
     private String strName;
@@ -38,13 +39,13 @@ public enum ProcessorType {
     public static ProcessorType fromString(final String strName) {
         ProcessorType[] values = ProcessorType.values();
 
-        String cleanupStrName = strName.toLowerCase().trim();
+        String cleanedStrName = strName.toLowerCase().trim();
 
         for (ProcessorType processorType : values) {
-            if (processorType.getStrName().equals(cleanupStrName)) {
+            if (processorType.getStrName().equals(cleanedStrName)) {
                 return processorType;
             }
         }
-        throw new RuntimeException("Could not find processor form name = " + strName); //todo custom exception
+        throw new IllegalStateException("Could not find processor for name = " + strName);
     }
 }
